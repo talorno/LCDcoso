@@ -64,23 +64,23 @@ def getCurrentSong():
 
 
 def playKey():
-    return subprocess.check_output(['mpc play'])
+    return subprocess.check_output(['mpc','play'])
 
 
 def stopKey():
-    return subprocess.check_output(['mpc stop'])
+    return subprocess.check_output(['mpc', 'stop'])
 
 
 def togglePlay():
-    return subprocess.check_output(['mpc toggle'])
+    return subprocess.check_output(['mpc', 'toggle'])
 
 
 def pauseKey():
-    return subprocess.check_output(['mpc pause'])
+    return subprocess.check_output(['mpc', 'pause'])
 
 
 def playPos(pos):
-    return subprocess.check_output(['mpc play'] + pos)
+    return subprocess.check_output(['mpc', 'play ' + pos])
 
 
 def nextSong():
@@ -184,6 +184,7 @@ def singleOff():
 # Loop Off > ]#021
 # Loop Toggle -> ]#022
 
+pos = '10'
 
 switch = {
     ']#001': playKey(),
@@ -207,9 +208,7 @@ switch = {
     ']#019': randomToggle(),
     ']#020': repeatOn(),
     ']#021': repeatOff(),
-    ']#022': repeatToggle(),
-
-
+    ']#022': repeatToggle()
     }
 
 
