@@ -29,22 +29,23 @@ import subprocess
 
 #helpers mpc
 def volumeUpBy2():
-    return subprocess.check_output(['mpc volume + 2'])
+    return subprocess.check_output(['mpc', 'volume', '+2'])
 
 
 def volumeDownBy2():
-    return subprocess.check_output(['mpc volume - 2'])
+    return subprocess.check_output(['mpc', 'volume', '-2'])
 
 
 def volumeMute():
-    return subprocess.check_output(['mpc volume 0'])
+    return subprocess.check_output(['mpc', 'volume', '0'])
+
 
 def volumeLevel(vol):
-    return subprocess.check_output(['mpc volume'] + vol)
+    return subprocess.check_output(['mpc', 'volume ', vol])
 
 
 def volumeFull():
-    return subprocess.check_output(['mpc volume 0'])
+    return subprocess.check_output(['mpc', 'volume', '100'])
 
 
 def getStatus():
@@ -52,19 +53,19 @@ def getStatus():
 
 
 def getPlaylist():
-    return subprocess.check_output(['mpc playlist'])
+    return subprocess.check_output(['mpc', 'playlist'])
 
 
-def getFilesList(dir):
-    return subprocess.check_output(['mpc listall'] + dir)
+def getFilesList(directory):
+    return subprocess.check_output(['mpc', 'listall', +directory])
 
 
 def getCurrentSong():
-    return subprocess.check_output(['mpc current'])
+    return subprocess.check_output(['mpc', 'current'])
 
 
 def playKey():
-    return subprocess.check_output(['mpc','play'])
+    return subprocess.check_output(['mpc', 'play'])
 
 
 def stopKey():
@@ -80,176 +81,204 @@ def pauseKey():
 
 
 def playPos(pos):
-    return subprocess.check_output(['mpc', 'play ' + pos])
+    return subprocess.check_output(['mpc', 'play', pos])
 
 
 def nextSong():
-    return subprocess.check_output(['mpc next'])
+    return subprocess.check_output(['mpc', 'next'])
 
 
 def prevSong():
-    return subprocess.check_output(['mpc prev'])
+    return subprocess.check_output(['mpc', 'prev'])
 
 
 def refreshLib():
-    return subprocess.check_output(['mpc update'])
+    return subprocess.check_output(['mpc', 'update'])
 
 
 def refreshLibDir(directory):
-    return subprocess.check_output(['mpc update'] + directory)
+    return subprocess.check_output(['mpc', 'update', directory])
 
 
 def seekPlus():
-    return subprocess.check_output(['mpc seek +'])
+    try:
+        out = subprocess.check_output(['mpc', 'seek', '+'])
+    except CalledProcessError:
+        if
 
 
 def seekMinus():
-    return subprocess.check_output(['mpc seek -'])
+    return subprocess.check_output(['mpc', 'seek', '-'])
 
 
 #occhio al parsing del tempo!! oggetto tipo tempo in python?
 def seekTime(time):
-    return subprocess.check_output(['mpc seek'] + time)
+    return subprocess.check_output(['mpc', 'seek', time])
 
 
 def seekPercent(percent):
-    return subprocess.check_output(['mpc seek'] + percent)
+    return subprocess.check_output(['mpc', 'seek', percent])
 
 
 def shuffle():
-    return subprocess.check_output(['mpc shuffle'])
+    return subprocess.check_output(['mpc', 'shuffle'])
 
 
 def searchSong(name):
-    return subprocess.check_output(['mpc search'] + name)
+    return subprocess.check_output(['mpc', 'search', + name])
 
 
 def repeatToggle():
-    return subprocess.check_output(['mpc repeat'])
+    return subprocess.check_output(['mpc', 'repeat'])
 
 
 def repeatOn():
-    return subprocess.check_output(['mpc repeat on'])
+    return subprocess.check_output(['mpc', 'repeat', 'on'])
 
 
 def repeatOff():
-    return subprocess.check_output(['mpc repeat off'])
+    return subprocess.check_output(['mpc', 'repeat', 'off'])
 
 
 def randomToggle():
-    return subprocess.check_output(['mpc random'])
+    return subprocess.check_output(['mpc', 'random'])
 
 
 def randomOn():
-    return subprocess.check_output(['mpc random on'])
+    return subprocess.check_output(['mpc', 'random', 'on'])
 
 
 def randomOff():
-    return subprocess.check_output(['mpc random off'])
+    return subprocess.check_output(['mpc', 'random', 'off'])
 
 
 def singleToggle():
-    return subprocess.check_output(['mpc single'])
+    return subprocess.check_output(['mpc', 'single'])
 
 
 def singleOn():
-    return subprocess.check_output(['mpc single on'])
+    return subprocess.check_output(['mpc', 'single', 'on'])
 
 
 def singleOff():
-    return subprocess.check_output(['mpc single off'])
+    return subprocess.check_output(['mpc', 'single', 'off'])
 
 
 #taglist segnali da seriale
-# PLAY ->  ]#001
-# Toggle PLay -> ]#002
-# STOP ->  ]#003
-# PAUSE ->  ]#004
-# PLAY Position ->  ]#005
-# NEXT Song ->  ]#006
-# PREV Song ->  ]#007
-# VOL+ ->  ]#008
-# VOL- ->  ]#009
-# VOL value ->  ]#010
-# VOL Full ->   ]#011
-# MUTE ->  ]#012
-# STATUS ->  ]#013
-# Get PLAYLIST ->  ]#014
-# Get FileList ->  ]#015
-# Get CurrSong ->  ]#016
-# RND on ->  ]#017
-# RND Off -> ]#018
-# RND Toggle -> ]#019
-# Loop on -> ]#020
-# Loop Off > ]#021
-# Loop Toggle -> ]#022
+#sintassi: ]#        XXX        YYY
+#         token     COMANDO    eventuale parametro
+# PLAY ->  ]#001000
+# Toggle PLay -> ]#002000
+# STOP ->  ]#003000
+# PAUSE ->  ]#004000
+# PLAY Position ->  ]#005000
+# NEXT Song ->  ]#006000
+# PREV Song ->  ]#007000
+# VOL+ ->  ]#008000
+# VOL- ->  ]#009000
+# VOL value ->  ]#010000
+# VOL Full ->   ]#011000
+# MUTE ->  ]#012000
+# STATUS ->  ]#013000
+# Get PLAYLIST ->  ]#014000
+# Get FileList ->  ]#015000
+# Get CurrSong ->  ]#016000
+# RND on ->  ]#017000
+# RND Off -> ]#018000
+# RND Toggle -> ]#019000
+# Loop on -> ]#020000
+# Loop Off > ]#021000
+# Loop Toggle -> ]#022000
 
-pos = '10'
+
+"""
+
 
 switch = {
-    ']#001': playKey(),
-    ']#002': togglePlay(),
-    ']#003': stopKey(),
-    ']#004': pauseKey(),
-    ']#005': playPos(pos),
-    ']#006': nextSong(),
-    ']#007': prevSong(),
-    ']#008': volumeUpBy2(),
-    ']#009': volumeDownBy2(),
-    ']#010': volumeLevel(vol),
-    ']#011': volumeFull(),
-    ']#012': volumeMute(),
-    ']#013': getStatus(),
-    ']#014': getPlaylist(),
-    ']#015': getFilesList(dir),
-    ']#016': getCurrentSong(),
-    ']#017': randomOn(),
-    ']#018': randomOff(),
-    ']#019': randomToggle(),
-    ']#020': repeatOn(),
-    ']#021': repeatOff(),
-    ']#022': repeatToggle()
+    ']#001000': playKey(),
+    ']#002000': togglePlay(),
+    ']#003000': stopKey(),
+    ']#004000': pauseKey(),
+    ']#005000': playPos(pos),
+    ']#006000': nextSong(),
+    ']#007000': prevSong(),
+    ']#008000': volumeUpBy2(),
+    ']#009000': volumeDownBy2(),
+    ']#010000': volumeLevel(vol),
+    ']#011000': volumeFull(),
+    ']#012000': volumeMute(),
+    ']#013000': getStatus(),
+    ']#014000': getPlaylist(),
+    ']#015000': getFilesList(dir),
+    ']#016000': getCurrentSong(),
+    ']#017000': randomOn(),
+    ']#018000': randomOff(),
+    ']#019000': randomToggle(),
+    ']#020000': repeatOn(),
+    ']#021000': repeatOff(),
+    ']#022000': repeatToggle()
     }
+"""
 
-
-
-
-
-
-
-	
+#
+#
 #Pic Helper
 
 def clearScreen():
     ser1.write('#C')
-	
+
+
 def posX(x):
 	ser1.write('#X'+x)
+
 
 def posY(y):
 	ser1.write('#X'+y)
 
+
 def cursorHome():
 	ser1.write('H')
 
+#
+#
 ##CONTROLLO FINE RIGA VIA PIC O QUI?
+
+
 def lcdWrite(text):
-	print(text)
-
-	
-
+    print(text)
 
 
 #VARIE
-def designGUI(songname,artist,vol,):
-	lcdWrite('|---'+songname+'--by--'+artist+'-----|')
-	lcdWrite('|_____________Vol: '+vol+'___|')
+def designGUI(songname, artist, vol,):
+    lcdWrite('|---' + songname + '--by--' + artist + '-----|')
+    lcdWrite('|_____________Vol: ' + vol + '___|')
 
 
-	
-	
-#CHIAMATE
+#
+#
+#CHIAMATE DI TEST
 #print (getFilesList(ciao))
-designGUI('antani','ugo','22')
+#designGUI('antani', 'ugo', '22')
 
-	
+pos = 10
+vol = 50
+directory = "Remo_Anzovino_Tabu"
+
+print (volumeUpBy2())
+print (volumeDownBy2())
+print (volumeMute())
+#print (volumeLevel(vol))
+print (volumeFull())
+print (getStatus())
+print (getPlaylist())
+#print (getFilesList(directory))
+print (getCurrentSong())
+print (playKey())
+print (stopKey())
+#print (playPos(pos))
+print (nextSong())
+print (prevSong())
+print (refreshLib())
+print (refreshLibDir(directory))
+print (seekPlus())
+print (seekMinus())
