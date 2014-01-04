@@ -19,6 +19,7 @@
 import serial
 #importazione modulo processi
 import subprocess
+import song
 
 
 #dichiarazione/inizializzazione di un oggetto seriale per la comunicazione)
@@ -103,8 +104,9 @@ def refreshLibDir(directory):
 def seekPlus():
     try:
         out = subprocess.check_output(['mpc', 'seek', '+'])
-    except CalledProcessError:
-        if
+    except subprocess.CalledProcessError:
+        if out == "not currently playing":
+            print ("ANTANI!")
 
 
 def seekMinus():
@@ -116,8 +118,8 @@ def seekTime(time):
     return subprocess.check_output(['mpc', 'seek', time])
 
 
-def seekPercent(percent):
-    return subprocess.check_output(['mpc', 'seek', percent])
+def seekPercent(percent)
+    return subprocess.check_output(['mpc', 'seek', str(percent) + '%'])
 
 
 def shuffle():
@@ -223,6 +225,10 @@ switch = {
 #
 #
 #Pic Helper
+#taglist segnali da seriale
+#sintassi: ]@        XXX        YYY
+#         token     COMANDO    eventuale parametro
+
 
 def clearScreen():
     ser1.write('#C')
@@ -241,7 +247,6 @@ def cursorHome():
 
 #
 #
-##CONTROLLO FINE RIGA VIA PIC O QUI?
 
 
 def lcdWrite(text):
@@ -257,28 +262,29 @@ def designGUI(songname, artist, vol,):
 #
 #
 #CHIAMATE DI TEST
-#print (getFilesList(ciao))
-#designGUI('antani', 'ugo', '22')
 
 pos = 10
 vol = 50
 directory = "Remo_Anzovino_Tabu"
+percent=75
 
-print (volumeUpBy2())
-print (volumeDownBy2())
-print (volumeMute())
+#print (volumeUpBy2())
+#print (volumeDownBy2())
+#print (volumeMute())
 #print (volumeLevel(vol))
-print (volumeFull())
-print (getStatus())
-print (getPlaylist())
+#print (volumeFull())
+#print (getStatus())
+#print (getPlaylist())
 #print (getFilesList(directory))
-print (getCurrentSong())
-print (playKey())
-print (stopKey())
+#print (getCurrentSong())
+#print (playKey())
+#print (stopKey())
 #print (playPos(pos))
-print (nextSong())
-print (prevSong())
-print (refreshLib())
-print (refreshLibDir(directory))
+#print (nextSong())
+#print (prevSong())
+#print (refreshLib())
+#print (refreshLibDir(directory))
 print (seekPlus())
-print (seekMinus())
+#print (seekMinus())
+#print (seekPercent(75))
+#print (shuffle())
