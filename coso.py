@@ -23,12 +23,23 @@ import song
 
 
 #dichiarazione/inizializzazione di un oggetto seriale per la comunicazione)
-#ser = serial.Serial("/dev/ttyS0	", 38400, 8, "N", 1, timeout=1)
+#ser = serial.Serial("/dev/ttyS0	", 115200, 8, "N", 1, timeout=1)
 
-#ser1 = serial.Serial("/dev/pts/4", 38400, 8, "N", 1, timeout=1)
-#ser2 = serial.Serial("/dev/pts/5", 38400, 8, "N", 1, timeout=1)
+
+
+
+#serial buffer fill pointer
+int cmd_buf_fp = 0
+string cmd_rcv_buf = [8]
+
+
+#currently playing song
+song curr_song
+
 
 #helpers mpc
+
+
 def volumeUpBy2():
     return subprocess.check_output(['mpc', 'volume', '+2'])
 
@@ -73,7 +84,7 @@ def stopKey():
     return subprocess.check_output(['mpc', 'stop'])
 
 
-def togglePlay():
+def playToggle():
     return subprocess.check_output(['mpc', 'toggle'])
 
 
@@ -118,7 +129,7 @@ def seekTime(time):
     return subprocess.check_output(['mpc', 'seek', time])
 
 
-def seekPercent(percent)
+def seekPercent(percent):
     return subprocess.check_output(['mpc', 'seek', str(percent) + '%'])
 
 
@@ -193,34 +204,6 @@ def singleOff():
 # Loop Toggle -> ]#022000
 
 
-"""
-
-
-switch = {
-    ']#001000': playKey(),
-    ']#002000': togglePlay(),
-    ']#003000': stopKey(),
-    ']#004000': pauseKey(),
-    ']#005000': playPos(pos),
-    ']#006000': nextSong(),
-    ']#007000': prevSong(),
-    ']#008000': volumeUpBy2(),
-    ']#009000': volumeDownBy2(),
-    ']#010000': volumeLevel(vol),
-    ']#011000': volumeFull(),
-    ']#012000': volumeMute(),
-    ']#013000': getStatus(),
-    ']#014000': getPlaylist(),
-    ']#015000': getFilesList(dir),
-    ']#016000': getCurrentSong(),
-    ']#017000': randomOn(),
-    ']#018000': randomOff(),
-    ']#019000': randomToggle(),
-    ']#020000': repeatOn(),
-    ']#021000': repeatOff(),
-    ']#022000': repeatToggle()
-    }
-"""
 
 #
 #
@@ -239,11 +222,11 @@ def posX(x):
 
 
 def posY(y):
-	ser1.write('#X'+y)
+    ser1.write('#X'+y)
 
 
 def cursorHome():
-	ser1.write('H')
+    ser1.write('H')
 
 #
 #
@@ -284,7 +267,89 @@ percent=75
 #print (prevSong())
 #print (refreshLib())
 #print (refreshLibDir(directory))
-print (seekPlus())
+#print (seekPlus())
 #print (seekMinus())
 #print (seekPercent(75))
 #print (shuffle())
+
+
+"""
+
+
+switch = {
+    ']#001000': playKey(),
+    ']#002000': togglePlay(),
+    ']#003000': stopKey(),
+    ']#004000': pauseKey(),
+    ']#005000': playPos(pos),
+    ']#006000': nextSong(),
+    ']#007000': prevSong(),
+    ']#008000': volumeUpBy2(),
+    ']#009000': volumeDownBy2(),
+    ']#010000': volumeLevel(vol),
+    ']#011000': volumeFull(),
+    ']#012000': volumeMute(),
+    ']#013000': getStatus(),
+    ']#014000': getPlaylist(),
+    ']#015000': getFilesList(dir),
+    ']#016000': getCurrentSong(),
+    ']#017000': randomOn(),
+    ']#018000': randomOff(),
+    ']#019000': randomToggle(),
+    ']#020000': repeatOn(),
+    ']#021000': repeatOff(),
+    ']#022000': repeatToggle()
+    }
+"""
+
+#CONTROLLO PER PRESENZA COMANDI
+   while buf_fp == 0:
+       buf.fp = ser.inWaiting()
+   buffer = ser.read(8)
+
+    if buffer == ']#001000':
+        playKey()
+    elif buffer == ']#002000':
+        togglePlay()
+    elif buffer == ']#003000':
+        stopKey()
+    elif buffer == ']#004000':
+        pauseKey()
+    elif buffer == ']#005000':
+        playPos(pos)
+    elif buffer == ']#006000':
+        nextSong()
+    elif buffer == ']#007000':
+        prevSong()
+    elif buffer == ']#008000':
+        volumeUpBy2()
+    elif buffer == ']#009000':
+        volumeDownBy2()
+    elif buffer == ']#010000':
+        volumeLevel(vol)
+    elif buffer == ']#011000':
+        volumeFull()
+    elif buffer == ']#012000':
+        volumeMute()
+    elif buffer == ']#013000':
+        getStatus()
+    elif buffer == ']#014000':
+        getPlaylist()
+    elif buffer == ']#015000':
+        getFilesList(dir)
+    elif buffer == ']#016000':
+        getCurrentSong()
+    elif buffer == ']#017000':
+        randomOn()
+    elif buffer == ']#018000':
+        randomOff()
+    elif buffer == ']#019000':
+        randomToggle()
+    elif buffer == ']#020000':
+        repeatOn()
+    elif buffer == ']#021000':
+        playToggle()
+    elif buffer == ']#022000':
+        repeatToggle()
+
+
